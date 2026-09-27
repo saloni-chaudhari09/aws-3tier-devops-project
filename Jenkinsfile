@@ -20,6 +20,21 @@ pipeline {
                 sh 'docker build -t aws-3tier-java-app:1.0 .'
             }
         }
+        stage('Push to ECR') {
+            steps {
+                sh '''
+            aws ecr get-login-password --region ap-south-1 | \
+            docker login --username AWS --password-stdin \
+            540175642636.dkr.ecr.ap-south-1.amazonaws.com
+
+            docker tag aws-3tier-java-app:1.0 \
+            540175642636.dkr.ecr.ap-south-1.amazonaws.com/aws-3tier-java-app:1.0
+
+            docker push \
+            540175642636.dkr.ecr.ap-south-1.amazonaws.com/aws-3tier-java-app:1.0
+        '''
+            }
+         }
 
         stage('Deploy Container') {
             steps {
